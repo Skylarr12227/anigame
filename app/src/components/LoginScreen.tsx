@@ -8,7 +8,7 @@ import { Gamepad2, UserPlus, LogIn, Trophy, Target, Zap } from 'lucide-react';
 
 interface LoginScreenProps {
   onLogin: (credentials: { username: string; password: string }) => Promise<boolean>;
-  onRegister: (credentials: { username: string; password: string }) => Promise<boolean>;
+  onRegister: (credentials: { username: string; email: string; password: string }) => Promise<boolean>;
   error: string | null;
   clearError: () => void;
   onLoginSuccess: () => void;
@@ -25,6 +25,7 @@ export function LoginScreen({
 }: LoginScreenProps) {
   const [activeTab, setActiveTab] = useState('login');
   const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -46,7 +47,7 @@ export function LoginScreen({
     clearError();
     setLoading(true);
     
-    const success = await onRegister({ username, password });
+    const success = await onRegister({ username, email, password });
     if (success) {
       onRegisterSuccess();
     }
@@ -165,6 +166,16 @@ export function LoginScreen({
                       placeholder="Username"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
+                      className="bg-[#0b0f19] border-gray-700"
+                      disabled={loading}
+                    />
+                  </div>
+                  <div>
+                    <Input
+                      type="email"
+                      placeholder="Email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       className="bg-[#0b0f19] border-gray-700"
                       disabled={loading}
                     />

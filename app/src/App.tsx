@@ -9,6 +9,12 @@ import { toast } from 'sonner';
 function App() {
   const auth = useAuth();
   const { state: socketState, actions: socketActions, setEventHandlers } = useSocket();
+  const {
+    authenticate,
+    getPets,
+    getBattleTeams,
+    getInventory,
+  } = socketActions;
 
   // Set up socket event handlers
   useEffect(() => {
@@ -16,9 +22,9 @@ function App() {
       onAuthenticated: () => {
         toast.success('Connected to game server!');
         // Request initial data
-        socketActions.getPets();
-        socketActions.getBattleTeams();
-        socketActions.getInventory();
+        getPets();
+        getBattleTeams();
+        getInventory();
       },
       onAuthError: (error) => {
         toast.error(`Connection failed: ${error}`);
@@ -37,28 +43,28 @@ function App() {
         toast.info(`${data.username} left the game`, { duration: 2000 });
       },
     });
-  }, [setEventHandlers, socketActions, auth]);
+  }, [setEventHandlers, getPets, getBattleTeams, getInventory, auth.logout]);
 
   // Authenticate socket when token is available
   useEffect(() => {
     if (auth.token && socketState.connected && !socketState.authenticated) {
-      socketActions.authenticate(auth.token);
+      authenticate(auth.token);
     }
-  }, [auth.token, socketState.connected, socketState.authenticated, socketActions]);
+  }, [auth.token, socketState.connected, socketState.authenticated, authenticate]);
 
   // Handle login success
   const handleLoginSuccess = useCallback(() => {
     if (auth.token) {
-      socketActions.authenticate(auth.token);
+      authenticate(auth.token);
     }
-  }, [auth.token, socketActions]);
+  }, [auth.token, authenticate]);
 
   // Handle register success
   const handleRegisterSuccess = useCallback(() => {
     if (auth.token) {
-      socketActions.authenticate(auth.token);
+      authenticate(auth.token);
     }
-  }, [auth.token, socketActions]);
+  }, [auth.token, authenticate]);
 
   // Show loading while checking auth
   if (auth.loading) {
